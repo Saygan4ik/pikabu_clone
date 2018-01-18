@@ -1,0 +1,36 @@
+version: '3'
+volumes:
+  postgres-data:
+    driver: local
+  app-gems:
+    driver: local
+
+services:
+  postgres:
+    image: postgres:10.1
+    ports:
+      - 5432:5432
+    volumes:
+      # Mount the DB dumps folder into the container, to be able to create & access database dumps:
+      - ./db/dumps:/db/dumps
+      # Mount out tmp folder, we might want to have access to something there during development:
+      - ./tmp:/tmp
+      # Mount our 'restoredb' script:
+      - ./bin/restoredb:/bin/restoredb:ro
+      # Mount our 'dumpdb' script:
+      - ./bin/dumpdb:/bin/dumpdb:ro
+      # We'll mount the 'postgres-data' volume into the location Postgres stores it's data:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: develop
+      POSTGRES_PASSWORD: develop
+
+  web:
+    build: .
+    command: rails server -p 3000 -b 0.0.0.0
+    volumes:
+      - .:/pikabu_clone
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
