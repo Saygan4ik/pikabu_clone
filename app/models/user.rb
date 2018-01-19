@@ -7,6 +7,9 @@ class User < ApplicationRecord
   validates_confirmation_of :password, if: :password_required?
   validates :token, uniqueness: true, allow_nil: true
   validates :email, format: { with: /\A[^@\s]+@[^@\s]+\z/ }
+  has_and_belongs_to_many :communities
+  has_many :posts
+  has_many :comments
 
   protected
 

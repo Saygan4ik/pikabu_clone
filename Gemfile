@@ -31,6 +31,7 @@ gem 'dotenv-rails', groups: %i[development test]
 gem 'has_secure_token'
 gem 'kaminari'
 gem 'sidekiq'
+gem 'acts_as_votable', '~> 0.11.1'
 gem 'rubocop', require: false
 
 group :development, :test do
