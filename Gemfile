@@ -15,7 +15,7 @@ gem 'puma', '~> 3.7'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
-# gem 'redis', '~> 3.0'
+gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 
@@ -30,6 +30,7 @@ gem 'carrierwave-aws'
 gem 'dotenv-rails', groups: %i[development test]
 gem 'has_secure_token'
 gem 'kaminari'
+gem 'sidekiq'
 gem 'rubocop', require: false
 
 group :development, :test do
