@@ -5,6 +5,8 @@ Rails.application.routes.draw do
       post 'auth/login', to: 'users/sessions#login'
       delete 'auth/logout', to: 'users/sessions#logout'
       post 'auth/register', to: 'users/registrations#register'
+
+      resources :posts, except: [:edit, :update]
     end
   end
 end
