@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       get 'new', to: 'posts#index_new'
       get 'search', to: 'posts#search'
       resources :posts, except: [:edit, :update]
+      resources :comments, except: [:edit, :update]
 
       root 'posts#index_hot'
     end

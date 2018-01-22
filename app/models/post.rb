@@ -7,5 +7,5 @@ class Post < ApplicationRecord
   belongs_to :user, counter_cache: true
   belongs_to :community, optional: true
   has_and_belongs_to_many :tags
-  has_many :comments
+  has_many :comments, dependent: :destroy
 end
