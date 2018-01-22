@@ -6,7 +6,10 @@ Rails.application.routes.draw do
       delete 'auth/logout', to: 'users/sessions#logout'
       post 'auth/register', to: 'users/registrations#register'
 
+      get 'posts/hot', to: 'posts#index_hot'
       resources :posts, except: [:edit, :update]
+
+      root 'posts#index_hot'
     end
   end
 end

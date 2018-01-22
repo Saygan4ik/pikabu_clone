@@ -1,5 +1,5 @@
 class PostSerializer < ActiveModel::Serializer
-  attributes :title, :text, :files
+  attributes :title, :text, :files, :created_at
   belongs_to :user
   has_many :tags
   belongs_to :community
