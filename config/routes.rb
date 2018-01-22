@@ -6,8 +6,9 @@ Rails.application.routes.draw do
       delete 'auth/logout', to: 'users/sessions#logout'
       post 'auth/register', to: 'users/registrations#register'
 
-      get 'posts/hot', to: 'posts#index_hot'
-      get 'posts/best', to: 'posts#index_best'
+      get '', to: 'posts#index_hot'
+      get 'best', to: 'posts#index_best'
+      get 'new', to: 'posts#index_new'
       resources :posts, except: [:edit, :update]
 
       root 'posts#index_hot'

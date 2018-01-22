@@ -1,7 +1,7 @@
 module Api
   module V1
     class PostsController < ApplicationController
-      before_action :authenticate_user, on: :create
+      before_action :authenticate_user, only: :create
 
       def index
         @posts = Post.order(created_at: :desc).page(params[:page]).per(params[:per_page])
@@ -12,13 +12,11 @@ module Api
       end
 
       def index_hot
-        @start_date = Time.parse(params[:start_date]) if params[:start_date]
-        @end_date = Time.parse(params[:end_date]) if params[:end_date]
-        setting_order_parameters_request(params[:order], params[:order_by])
-        setting_date_parameters_request(@start_date, @end_date)
+        setting_date_parameters
+        setting_order_parameters
         @posts = Post.where(created_at: @start_date..@end_date, isHot: true)
-                   .order(@order_post)
-                   .page(params[:page]).per(params[:per_page])
+                     .order(@order_post)
+                     .page(params[:page]).per(params[:per_page])
         render json: @posts,
                each_serializer: PostSerializer,
                meta: pagination_dict(@posts),
@@ -26,12 +24,21 @@ module Api
       end
 
       def index_best
-        @start_date = Time.parse(params[:start_date]) if params[:start_date]
-        @end_date = Time.parse(params[:end_date]) if params[:end_date]
-        setting_date_parameters_request(@start_date, @end_date)
+        setting_date_parameters
         @posts = Post.where(created_at: @start_date..@end_date)
-                   .order(cached_weighted_average: :desc)
-                   .page(params[:page]).per(params[:per_page])
+                     .order(cached_weighted_average: :desc)
+                     .page(params[:page]).per(params[:per_page])
+        render json: @posts,
+               each_serializer: PostSerializer,
+               meta: pagination_dict(@posts),
+               status: :ok
+      end
+
+      def index_new
+        setting_date_parameters
+        @posts = Post.where(created_at: @start_date..@end_date)
+                     .order(created_at: :desc)
+                     .page(params[:page]).per(params[:per_page])
         render json: @posts,
                each_serializer: PostSerializer,
                meta: pagination_dict(@posts),
@@ -74,30 +81,30 @@ module Api
         tags.split(' ').map! { |tag| Tag.find_or_initialize_by(name: tag) }
       end
 
-      def setting_date_parameters_request(start_date, end_date)
+      def setting_date_parameters
+        @start_date = Time.parse(params[:start_date]) if params[:start_date]
+        @end_date = Time.parse(params[:end_date]) if params[:end_date]
         case
-        when !start_date && !end_date
-          @end_date = Time.now
-          @start_date = @end_date - 24.hour
-        when !start_date && end_date
+        when @start_date && @end_date
+          @end_date += 24.hour
+        when !@start_date && @end_date
           @start_date = '1970-01-01'
-          @end_date = end_date + 24.hour - 1.second
-        when start_date && !end_date
-          @start_date = start_date
+          @end_date = @end_date + 24.hour - 1.second
+        when @start_date && !@end_date
           @end_date = Time.now
         else
-          @start_date = start_date
-          @end_date = end_date + 24.hour
+          @end_date = Time.now
+          @start_date = @end_date - 24.hour
         end
       end
 
-      def setting_order_parameters_request(order, order_by)
-        if order == 'time'
+      def setting_order_parameters
+        if params[:order] == 'time'
           @order_post = 'created_at'
         else
           @order_post = 'cached_weighted_average'
         end
-        if order_by == 'asc'
+        if params[:order_by] == 'asc'
           @order_post << ' ASC'
         else
           @order_post << ' DESC'
