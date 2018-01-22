@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       get '', to: 'posts#index_hot'
       get 'best', to: 'posts#index_best'
       get 'new', to: 'posts#index_new'
+      get 'search', to: 'posts#search'
       resources :posts, except: [:edit, :update]
 
       root 'posts#index_hot'

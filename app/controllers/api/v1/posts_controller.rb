@@ -73,6 +73,26 @@ module Api
         end
       end
 
+      def search
+        setting_date_parameters_for_search
+        setting_order_parameters
+        @rating = if params[:rating]
+                    params[:rating]
+                  else
+                    -999_999
+                  end
+        @tags = params[:tags] if params[:tags]
+        @posts = Post.joins(:tags)
+                   .where('title LIKE ?', "%#{params[:search_data]}%")
+                   .where(created_at: @start_date..@end_date)
+                   .where('cached_weighted_average >= :rating', {rating: @rating})
+                   .page(params[:page]).per(params[:per_page])
+        render json: @posts,
+               each_serializer: PostSerializer,
+               meta: pagination_dict(@posts),
+               status: :ok
+      end
+
       private
 
       def post_params
@@ -97,6 +117,14 @@ module Api
           @end_date = Time.now
           @start_date = @end_date - 24.hour
         end
+      end
+
+      def setting_date_parameters_for_search
+        @start_date = Time.parse(params[:start_date]) if params[:start_date]
+        @end_date = Time.parse(params[:end_date]) if params[:end_date]
+        @start_date ||= '1970-01-01'
+        @end_date ||= Time.now
+        @end_date += 24.hour
       end
 
       def setting_order_parameters
