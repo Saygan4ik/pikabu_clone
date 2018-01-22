@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     module Users
@@ -32,9 +34,7 @@ module Api
 
         def regenerate_token
           token = SecureRandom.base58(24)
-          while User.where(token: token).exists?
-            token = SecureRandom.base58(24)
-          end
+          token = SecureRandom.base58(24) while User.where(token: token).exists?
           @user.token = token
         end
       end

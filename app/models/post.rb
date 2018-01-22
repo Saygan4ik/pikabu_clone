@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Post < ApplicationRecord
   acts_as_votable
   mount_uploaders :files, PostFilesUploader

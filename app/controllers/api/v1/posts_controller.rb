@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Api
   module V1
     class PostsController < ApplicationController
@@ -84,13 +86,12 @@ module Api
       def setting_date_parameters
         @start_date = Time.parse(params[:start_date]) if params[:start_date]
         @end_date = Time.parse(params[:end_date]) if params[:end_date]
-        case
-        when @start_date && @end_date
+        if @start_date && @end_date
           @end_date += 24.hour
-        when !@start_date && @end_date
+        elsif !@start_date && @end_date
           @start_date = '1970-01-01'
           @end_date = @end_date + 24.hour - 1.second
-        when @start_date && !@end_date
+        elsif @start_date && !@end_date
           @end_date = Time.now
         else
           @end_date = Time.now
@@ -99,16 +100,16 @@ module Api
       end
 
       def setting_order_parameters
-        if params[:order] == 'time'
-          @order_post = 'created_at'
-        else
-          @order_post = 'cached_weighted_average'
-        end
-        if params[:order_by] == 'asc'
-          @order_post << ' ASC'
-        else
-          @order_post << ' DESC'
-        end
+        @order_post = if params[:order] == 'time'
+                        'created_at'
+                      else
+                        'cached_weighted_average'
+                      end
+        @order_post += if params[:order_by] == 'asc'
+                         ' ASC'
+                       else
+                         ' DESC'
+                       end
       end
     end
   end
