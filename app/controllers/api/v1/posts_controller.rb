@@ -25,6 +25,19 @@ module Api
                status: :ok
       end
 
+      def index_best
+        @start_date = Time.parse(params[:start_date]) if params[:start_date]
+        @end_date = Time.parse(params[:end_date]) if params[:end_date]
+        setting_date_parameters_request(@start_date, @end_date)
+        @posts = Post.where(created_at: @start_date..@end_date)
+                   .order(cached_weighted_average: :desc)
+                   .page(params[:page]).per(params[:per_page])
+        render json: @posts,
+               each_serializer: PostSerializer,
+               meta: pagination_dict(@posts),
+               status: :ok
+      end
+
       def show
         @post = Post.find_by(id: params[:id])
         if @post.nil?

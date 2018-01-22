@@ -7,6 +7,7 @@ Rails.application.routes.draw do
       post 'auth/register', to: 'users/registrations#register'
 
       get 'posts/hot', to: 'posts#index_hot'
+      get 'posts/best', to: 'posts#index_best'
       resources :posts, except: [:edit, :update]
 
       root 'posts#index_hot'
