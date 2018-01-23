@@ -42,7 +42,7 @@ class PostFinder
   def setting_date_parameters(skip_empty = false)
     start_date = Time.parse(@params[:start_date]).beginning_of_day if @params[:start_date]
     end_date = Time.parse(@params[:end_date]).end_of_day if @params[:end_date]
-    if start_date && end_date
+    @posts = if start_date && end_date
       @posts.where(created_at: start_date..end_date)
     elsif !start_date && end_date
       @posts.where('created_at <= ?', end_date)
