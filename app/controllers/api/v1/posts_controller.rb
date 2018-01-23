@@ -1,61 +1,37 @@
 # frozen_string_literal: true
 
+require_dependency 'app/services/post_finder'
+require_dependency 'app/services/users_vote'
+
 module Api
   module V1
     class PostsController < ApplicationController
-      before_action :authenticate_user, only: :create
+      before_action :authenticate_user, only: [:create, :upvote, :downvote]
 
       def index
         @posts = Post.order(created_at: :desc).page(params[:page]).per(params[:per_page])
-        render json: @posts,
-               each_serializer: PostSerializer,
-               meta: pagination_dict(@posts),
-               status: :ok
+        render_json
       end
 
       def index_hot
-        setting_date_parameters
-        setting_order_parameters
-        @posts = Post.where(created_at: @start_date..@end_date, isHot: true)
-                     .order(@order_post)
-                     .page(params[:page]).per(params[:per_page])
-        render json: @posts,
-               each_serializer: PostSerializer,
-               meta: pagination_dict(@posts),
-               status: :ok
+        @posts = PostFinder.new(whitelisted_params).index_hot
+        render_json
       end
 
       def index_best
-        setting_date_parameters
-        @posts = Post.where(created_at: @start_date..@end_date)
-                     .order(cached_weighted_average: :desc)
-                     .page(params[:page]).per(params[:per_page])
-        render json: @posts,
-               each_serializer: PostSerializer,
-               meta: pagination_dict(@posts),
-               status: :ok
+        @posts = PostFinder.new(whitelisted_params).index_best
+        render_json
       end
 
       def index_new
-        setting_date_parameters
-        @posts = Post.where(created_at: @start_date..@end_date)
-                     .order(created_at: :desc)
-                     .page(params[:page]).per(params[:per_page])
-        render json: @posts,
-               each_serializer: PostSerializer,
-               meta: pagination_dict(@posts),
-               status: :ok
+        @posts = PostFinder.new(whitelisted_params).index_new
+        render_json
       end
 
       def show
         @post = Post.find_by(id: params[:id])
-        if @post.nil?
-          render json: { messages: 'Post is not found' },
-                 status: :not_found
-        else
-          render json: @post,
-                 status: :ok
-        end
+        render json: @post,
+               status: :ok
       end
 
       def create
@@ -74,22 +50,24 @@ module Api
       end
 
       def search
-        setting_date_parameters_for_search
-        setting_order_parameters
-        @rating = if params[:rating]
-                    params[:rating]
-                  else
-                    -999_999
-                  end
-        @tags = params[:tags] if params[:tags]
-        @posts = Post.joins(:tags)
-                   .where('title LIKE ?', "%#{params[:search_data]}%")
-                   .where(created_at: @start_date..@end_date)
-                   .where('cached_weighted_average >= :rating', {rating: @rating})
-                   .page(params[:page]).per(params[:per_page])
-        render json: @posts,
-               each_serializer: PostSerializer,
-               meta: pagination_dict(@posts),
+        @posts = PostFinder.new(whitelisted_params).search
+
+        render_json
+      end
+
+      def upvote
+        @post = Post.find(params[:post_id])
+        @messages = UsersVote.new(@user, @post).upvote
+
+        render json: { messages: @messages },
+               status: :ok
+      end
+
+      def downvote
+        @post = Post.find(params[:post_id])
+        @messages = UsersVote.new(@user, @post).downvote
+
+        render json: { messages: @messages },
                status: :ok
       end
 
@@ -103,41 +81,20 @@ module Api
         tags.split(' ').map! { |tag| Tag.find_or_initialize_by(name: tag) }
       end
 
-      def setting_date_parameters
-        @start_date = Time.parse(params[:start_date]) if params[:start_date]
-        @end_date = Time.parse(params[:end_date]) if params[:end_date]
-        if @start_date && @end_date
-          @end_date += 24.hour
-        elsif !@start_date && @end_date
-          @start_date = '1970-01-01'
-          @end_date = @end_date + 24.hour - 1.second
-        elsif @start_date && !@end_date
-          @end_date = Time.now
-        else
-          @end_date = Time.now
-          @start_date = @end_date - 24.hour
-        end
+      def whitelisted_params
+        params.permit(:search_data, :tags,
+                      :start_date, :end_date,
+                      :order, :order_by,
+                      :page, :per_page)
       end
 
-      def setting_date_parameters_for_search
-        @start_date = Time.parse(params[:start_date]) if params[:start_date]
-        @end_date = Time.parse(params[:end_date]) if params[:end_date]
-        @start_date ||= '1970-01-01'
-        @end_date ||= Time.now
-        @end_date += 24.hour
-      end
-
-      def setting_order_parameters
-        @order_post = if params[:order] == 'time'
-                        'created_at'
-                      else
-                        'cached_weighted_average'
-                      end
-        @order_post += if params[:order_by] == 'asc'
-                         ' ASC'
-                       else
-                         ' DESC'
-                       end
+      def render_json
+        render json: @posts,
+               each_serializer: PostSerializer,
+               meta: pagination_dict(@posts),
+               status: :ok
+      rescue ArgumentError => e
+        render json: { error: e.message }, status: :bad_request
       end
     end
   end

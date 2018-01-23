@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180122104046) do
+ActiveRecord::Schema.define(version: 20180123131917) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,20 @@ ActiveRecord::Schema.define(version: 20180122104046) do
     t.bigint "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "cached_votes_total", default: 0
+    t.integer "cached_votes_score", default: 0
+    t.integer "cached_votes_up", default: 0
+    t.integer "cached_votes_down", default: 0
+    t.integer "cached_weighted_score", default: 0
+    t.integer "cached_weighted_total", default: 0
+    t.float "cached_weighted_average", default: 0.0
+    t.index ["cached_votes_down"], name: "index_comments_on_cached_votes_down"
+    t.index ["cached_votes_score"], name: "index_comments_on_cached_votes_score"
+    t.index ["cached_votes_total"], name: "index_comments_on_cached_votes_total"
+    t.index ["cached_votes_up"], name: "index_comments_on_cached_votes_up"
+    t.index ["cached_weighted_average"], name: "index_comments_on_cached_weighted_average"
+    t.index ["cached_weighted_score"], name: "index_comments_on_cached_weighted_score"
+    t.index ["cached_weighted_total"], name: "index_comments_on_cached_weighted_total"
     t.index ["parent_id"], name: "index_comments_on_parent_id"
     t.index ["post_id"], name: "index_comments_on_post_id"
     t.index ["user_id"], name: "index_comments_on_user_id"
@@ -73,6 +87,13 @@ ActiveRecord::Schema.define(version: 20180122104046) do
     t.integer "cached_weighted_score", default: 0
     t.integer "cached_weighted_total", default: 0
     t.float "cached_weighted_average", default: 0.0
+    t.index ["cached_votes_down"], name: "index_posts_on_cached_votes_down"
+    t.index ["cached_votes_score"], name: "index_posts_on_cached_votes_score"
+    t.index ["cached_votes_total"], name: "index_posts_on_cached_votes_total"
+    t.index ["cached_votes_up"], name: "index_posts_on_cached_votes_up"
+    t.index ["cached_weighted_average"], name: "index_posts_on_cached_weighted_average"
+    t.index ["cached_weighted_score"], name: "index_posts_on_cached_weighted_score"
+    t.index ["cached_weighted_total"], name: "index_posts_on_cached_weighted_total"
     t.index ["community_id"], name: "index_posts_on_community_id"
     t.index ["user_id"], name: "index_posts_on_user_id"
   end
@@ -99,7 +120,9 @@ ActiveRecord::Schema.define(version: 20180122104046) do
     t.datetime "updated_at", null: false
     t.integer "posts_count", default: 0
     t.integer "comments_count", default: 0
+    t.float "rating", default: 0.0
     t.index ["email"], name: "index_users_on_email"
+    t.index ["rating"], name: "index_users_on_rating"
     t.index ["token"], name: "index_users_on_token"
   end
 

@@ -10,6 +10,10 @@ Rails.application.routes.draw do
       get 'best', to: 'posts#index_best'
       get 'new', to: 'posts#index_new'
       get 'search', to: 'posts#search'
+      post 'post/like', to: 'posts#upvote'
+      post 'post/dislike', to: 'posts#downvote'
+      post 'comment/like', to: 'comments#upvote'
+      post 'comment/dislike', to: 'comments#downvote'
       resources :posts, except: [:edit, :update]
       resources :comments, except: [:edit, :update]
 

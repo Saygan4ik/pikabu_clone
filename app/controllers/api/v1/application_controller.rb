@@ -3,6 +3,10 @@
 module Api
   module V1
     class ApplicationController < ActionController::API
+      rescue_from ActiveRecord::RecordNotFound do
+        render json: {}, status: 404
+      end
+
       def authenticate_user
         token = request.headers['X-USER-TOKEN']
         return unauthorize unless token
