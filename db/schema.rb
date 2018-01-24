@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123131917) do
+ActiveRecord::Schema.define(version: 20180124080642) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,8 +19,6 @@ ActiveRecord::Schema.define(version: 20180123131917) do
     t.text "text"
     t.string "image"
     t.bigint "user_id"
-    t.bigint "post_id"
-    t.bigint "parent_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "cached_votes_total", default: 0
@@ -30,6 +28,8 @@ ActiveRecord::Schema.define(version: 20180123131917) do
     t.integer "cached_weighted_score", default: 0
     t.integer "cached_weighted_total", default: 0
     t.float "cached_weighted_average", default: 0.0
+    t.integer "commentable_id"
+    t.string "commentable_type"
     t.index ["cached_votes_down"], name: "index_comments_on_cached_votes_down"
     t.index ["cached_votes_score"], name: "index_comments_on_cached_votes_score"
     t.index ["cached_votes_total"], name: "index_comments_on_cached_votes_total"
@@ -37,8 +37,7 @@ ActiveRecord::Schema.define(version: 20180123131917) do
     t.index ["cached_weighted_average"], name: "index_comments_on_cached_weighted_average"
     t.index ["cached_weighted_score"], name: "index_comments_on_cached_weighted_score"
     t.index ["cached_weighted_total"], name: "index_comments_on_cached_weighted_total"
-    t.index ["parent_id"], name: "index_comments_on_parent_id"
-    t.index ["post_id"], name: "index_comments_on_post_id"
+    t.index ["commentable_id", "commentable_type"], name: "index_comments_on_commentable_id_and_commentable_type"
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 

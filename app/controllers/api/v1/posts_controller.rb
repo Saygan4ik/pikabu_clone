@@ -29,7 +29,7 @@ module Api
       end
 
       def show
-        @post = Post.find_by(id: params[:id])
+        @post = Post.find(params[:id])
         render json: @post,
                status: :ok
       end

@@ -5,5 +5,5 @@ class PostSerializer < ActiveModel::Serializer
   belongs_to :user
   has_many :tags
   belongs_to :community
-  has_many :comments
+  has_many :comments, as: :commentable
 end

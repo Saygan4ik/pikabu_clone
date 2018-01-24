@@ -6,9 +6,11 @@ module Api
   module V1
     class CommentsController < ApplicationController
       before_action :authenticate_user, only: [:create, :upvote, :downvote]
+      before_action :find_commentable
 
       def create
-        @comment = @user.comments.new(comment_params)
+        @comment = @commentable.comments.new(comment_params)
+        @comment[:user_id] = @user.id
         if @comment.save
           render json: @comment,
                  status: :ok
@@ -37,7 +39,12 @@ module Api
       private
 
       def comment_params
-        params.require(:comment).permit(:text, :image, :parent_id, :post_id)
+        params.require(:comment).permit(:text, :image)
+      end
+
+      def find_commentable
+        @commentable = Comment.find(params[:comment_id]) if params[:comment_id]
+        @commentable = Post.find(params[:post_id]) if params[:post_id]
       end
     end
   end
