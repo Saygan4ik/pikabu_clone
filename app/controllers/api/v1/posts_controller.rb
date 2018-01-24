@@ -6,7 +6,7 @@ require_dependency 'app/services/users_vote'
 module Api
   module V1
     class PostsController < ApplicationController
-      before_action :authenticate_user, only: [:create, :upvote, :downvote]
+      before_action :authenticate_user, only: %i[create upvote downvote]
 
       def index
         @posts = Post.order(created_at: :desc)

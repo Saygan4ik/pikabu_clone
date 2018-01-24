@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class PostFinder
   def initialize(params)
     @params = params
@@ -43,13 +45,13 @@ class PostFinder
     start_date = Time.parse(@params[:start_date]).beginning_of_day if @params[:start_date]
     end_date = Time.parse(@params[:end_date]).end_of_day if @params[:end_date]
     @posts = if start_date && end_date
-      @posts.where(created_at: start_date..end_date)
-    elsif !start_date && end_date
-      @posts.where('created_at <= ?', end_date)
-    elsif start_date && !end_date
-      @posts.where('created_at >= ?', start_date)
-    else
-      @posts.where(created_at: Time.current - 24.hours..Time.current) unless skip_empty
+               @posts.where(created_at: start_date..end_date)
+             elsif !start_date && end_date
+               @posts.where('created_at <= ?', end_date)
+             elsif start_date && !end_date
+               @posts.where('created_at >= ?', start_date)
+             else
+               @posts.where(created_at: Time.current - 24.hours..Time.current) unless skip_empty
     end
   end
 

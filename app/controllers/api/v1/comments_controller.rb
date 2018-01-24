@@ -5,7 +5,7 @@ require_dependency 'app/services/users_vote'
 module Api
   module V1
     class CommentsController < ApplicationController
-      before_action :authenticate_user, only: [:create, :upvote, :downvote]
+      before_action :authenticate_user, only: %i[create upvote downvote]
       before_action :find_commentable
 
       def create

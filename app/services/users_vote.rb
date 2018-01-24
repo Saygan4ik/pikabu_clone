@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class UsersVote
   def initialize(user, object)
     @user = user

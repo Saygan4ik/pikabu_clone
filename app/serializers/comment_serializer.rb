@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CommentSerializer < ActiveModel::Serializer
   attributes :text, :image, :created_at, :id
   belongs_to :user

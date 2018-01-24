@@ -5,7 +5,7 @@ require_dependency 'app/services/post_finder'
 module Api
   module V1
     class CommunitiesController < ApplicationController
-      before_action :authenticate_user, only: [:subscribe, :unsubscribe, :posts_subscriptions]
+      before_action :authenticate_user, only: %i[subscribe unsubscribe posts_subscriptions]
 
       def index
         @communities = Community.all
