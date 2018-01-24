@@ -32,6 +32,7 @@ class PostFinder
   def search
     @posts = Post.all
     setting_date_parameters(true)
+    filter_user
     filter_rating
     filter_tags
     filter_search_data
@@ -86,5 +87,10 @@ class PostFinder
   def filter_search_data
     return unless @params[:search_data]
     @posts = @posts.where('title LIKE ?', "%#{@params[:search_data]}%")
+  end
+
+  def filter_user
+    return unless @params[:user_id]
+    @posts = @posts.where(user_id: @params[:user_id])
   end
 end

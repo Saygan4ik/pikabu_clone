@@ -84,7 +84,7 @@ module Api
       end
 
       def whitelisted_params
-        params.permit(:search_data, :tags,
+        params.permit(:search_data, :tags, :user_id,
                       :start_date, :end_date,
                       :order, :order_by,
                       :page, :per_page)
