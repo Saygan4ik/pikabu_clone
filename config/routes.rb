@@ -17,9 +17,19 @@ Rails.application.routes.draw do
       get 'favorites/all', to: 'favorites#all'
       post 'favorites/add', to: 'favoritecontents#add_to_favorites'
       delete 'favorites/remove', to: 'favoritecontents#remove_from_favorites'
+      get 'communities/posts/subscriptions', to: ''
       resources :posts, except: [:edit, :update]
       resources :comments, except: [:edit, :update]
       resources :favorites, only: [:index, :show]
+      resources :communities do
+        member do
+          get 'subscribe'
+          get 'unsubscribe'
+          get 'posts_new'
+          get 'posts_hot'
+          get 'posts_best'
+        end
+      end
 
       root 'posts#index_hot'
     end

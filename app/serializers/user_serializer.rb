@@ -3,4 +3,5 @@
 class UserSerializer < ActiveModel::Serializer
   attributes :nickname
   has_many :posts
+  has_many :communities
 end

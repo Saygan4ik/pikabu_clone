@@ -9,7 +9,9 @@ module Api
       before_action :authenticate_user, only: [:create, :upvote, :downvote]
 
       def index
-        @posts = Post.order(created_at: :desc).page(params[:page]).per(params[:per_page])
+        @posts = Post.order(created_at: :desc)
+                     .page(params[:page])
+                     .per(params[:per_page])
         render_json
       end
 
@@ -74,7 +76,7 @@ module Api
       private
 
       def post_params
-        params.require(:post).permit(:title, :text, files: [])
+        params.require(:post).permit(:title, :text, :community_id, files: [])
       end
 
       def create_new_tags(tags)
