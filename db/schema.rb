@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180124080642) do
+ActiveRecord::Schema.define(version: 20180124145746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -54,20 +54,20 @@ ActiveRecord::Schema.define(version: 20180124080642) do
     t.index ["user_id"], name: "index_communities_users_on_user_id"
   end
 
-  create_table "favorites", force: :cascade do |t|
-    t.string "name", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "favorites_users", id: false, force: :cascade do |t|
+  create_table "favoritecontents", force: :cascade do |t|
     t.integer "favorite_id"
     t.integer "user_id"
     t.string "content_type"
     t.bigint "content_id"
-    t.index ["content_type", "content_id"], name: "index_favorites_users_on_content_type_and_content_id"
-    t.index ["favorite_id"], name: "index_favorites_users_on_favorite_id"
-    t.index ["user_id"], name: "index_favorites_users_on_user_id"
+    t.index ["content_type", "content_id"], name: "index_favoritecontents_on_content_type_and_content_id"
+    t.index ["favorite_id"], name: "index_favoritecontents_on_favorite_id"
+    t.index ["user_id"], name: "index_favoritecontents_on_user_id"
+  end
+
+  create_table "favorites", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "posts", force: :cascade do |t|

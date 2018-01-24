@@ -14,8 +14,12 @@ Rails.application.routes.draw do
       post 'post/dislike', to: 'posts#downvote'
       post 'comment/like', to: 'comments#upvote'
       post 'comment/dislike', to: 'comments#downvote'
+      get 'favorites/all', to: 'favorites#all'
+      post 'favorites/add', to: 'favoritecontents#add_to_favorites'
+      delete 'favorites/remove', to: 'favoritecontents#remove_from_favorites'
       resources :posts, except: [:edit, :update]
       resources :comments, except: [:edit, :update]
+      resources :favorites, only: [:index, :show]
 
       root 'posts#index_hot'
     end

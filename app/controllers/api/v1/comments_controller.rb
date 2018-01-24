@@ -20,6 +20,12 @@ module Api
         end
       end
 
+      def show
+        @comment = Comment.find(params[:id])
+        render json: @comment,
+               status: :ok
+      end
+
       def upvote
         @comment = Comment.find(params[:comment_id])
         @messages = UsersVote.new(@user, @comment).upvote
