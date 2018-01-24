@@ -5,7 +5,7 @@ require_dependency 'app/services/post_finder'
 module Api
   module V1
     class CommunitiesController < ApplicationController
-      before_action :authenticate_user, only: [:subscribe, :unsubscribe]
+      before_action :authenticate_user, only: [:subscribe, :unsubscribe, :posts_subscriptions]
 
       def index
         @communities = Community.all
@@ -64,6 +64,12 @@ module Api
       def posts_best
         @posts = PostFinder.new(whitelisted_params).index_best
         @posts = @posts.where(community_id: params[:id])
+        render_json
+      end
+
+      def posts_subscriptions
+        @posts = PostFinder.new(whitelisted_params).index_new
+        @posts = @posts.where(community_id: @user.communities)
         render_json
       end
 
