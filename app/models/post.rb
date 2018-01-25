@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 class Post < ApplicationRecord
+  attr_accessor :comments_order
   acts_as_votable
   mount_uploaders :files, PostFilesUploader
   validates :title, presence: true

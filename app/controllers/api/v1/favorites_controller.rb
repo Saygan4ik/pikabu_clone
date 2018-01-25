@@ -12,26 +12,26 @@ module Api
       end
 
       def show
-        @favorites = @user.favoritecontents.where(favorite_id: params[:id])
+        @favorites = @user.favoritecontents.find_by(favorite_id: params[:id])
         if @favorites.empty?
           render json: { messages: 'Not found' },
                  status: :not_found
         else
           @response = []
-          getting_contents
+          load_contents
           render json: @response,
                  status: :ok
         end
       end
 
-      def all
+      def contents
         @favorites = @user.favoritecontents
         if @favorites.empty?
           render json: { messages: 'Not found' },
                  status: :not_found
         else
           @response = []
-          getting_contents
+          load_contents
 
           render json: @response,
                  status: :ok
@@ -40,12 +40,12 @@ module Api
 
       private
 
-      def getting_contents
+      def load_contents
         @favorites.each do |item|
           @response << if item.content_type == 'Post'
-                         Post.find_by(id: item.content_id)
+                         Post.find(item.content_id)
                        else
-                         Comment.find_by(id: item.content_id)
+                         Comment.find(item.content_id)
                        end
         end
       end

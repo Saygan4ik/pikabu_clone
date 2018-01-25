@@ -6,4 +6,8 @@ class PostSerializer < ActiveModel::Serializer
   has_many :tags
   belongs_to :community
   has_many :comments, as: :commentable
+
+  def comments
+    object.comments.order(cached_weighted_score: :desc) if object.comments_order == 'rating'
+  end
 end

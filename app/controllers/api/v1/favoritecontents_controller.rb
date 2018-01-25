@@ -7,12 +7,10 @@ module Api
       before_action :find_content, :find_or_create_favorite
 
       def add_to_favorites
-        @favoritecontent = find_favoritecontent
-        if @favoritecontent.empty?
-          @favoritecontent = Favoritecontent.new(user_id: @user.id,
-                                                 content: @content)
-          @favoritecontent.favorite_id = @favorite.id if @favorite
-          @favoritecontent.save
+        favoritecontent = find_favoritecontent
+        if favoritecontent.empty?
+          @user.favoritecontents.create!(content: @content,
+                                         favorite_id: @favorite&.id)
           render json: { messages: 'Added to favorites' },
                  status: :ok
         else
@@ -22,12 +20,12 @@ module Api
       end
 
       def remove_from_favorites
-        @favoritecontent = find_favoritecontent
-        if @favoritecontent.empty?
+        favoritecontent = find_favoritecontent
+        if favoritecontent.empty?
           render json: { messages: 'not found' },
                  status: :not_found
         else
-          Favoritecontent.all.delete(@favoritecontent)
+          favoritecontent.destroy_all
           render json: { messages: 'Remove from favorites' },
                  status: :ok
         end
@@ -36,20 +34,16 @@ module Api
       private
 
       def find_favoritecontent
-        @favcontent = Favoritecontent.where(user_id: @user.id,
-                                            content: @content)
-        @favcontent = if @favorite
-                        @favcontent.where(favorite_id: @favorite.id)
-                      else
-                        @favcontent.where(favorite_id: nil)
-                      end
+        favorite_id = @favorite ? @favorite.id : nil
+        @user.favoritecontents.where(content: @content,
+                                     favorite_id: favorite_id)
       end
 
       def find_content
-        if params[:post_id] || params[:comment_id]
-          @content = Comment.find(params[:comment_id]) if params[:comment_id]
-          @content = Post.find(params[:post_id]) if params[:post_id]
-        else
+        @content = Comment.find(params[:comment_id]) if params[:comment_id]
+        @content = Post.find(params[:post_id]) if params[:post_id]
+
+        unless @content
           render json: { messages: 'Bad_request' },
                  status: :bad_request
         end
