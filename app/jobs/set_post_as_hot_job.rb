@@ -3,7 +3,7 @@
 class SetPostAsHotJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
+  def perform(*_args)
     @posts = Post.where(created_at: Time.current - 24.hours..Time.current)
                  .where(isHot: false)
     @posts.each do |post|
