@@ -11,7 +11,7 @@ module Api
         token = request.headers['X-USER-TOKEN']
         return unauthorize unless token
         @user = User.find_by_token(token)
-        return unauthorize unless @user
+        return unauthorize unless @user && !@user.isBanned?
         @user
       end
 

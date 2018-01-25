@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       get 'best', to: 'posts#index_best'
       get 'new', to: 'posts#index_new'
       get 'search', to: 'posts#search'
+      post 'users/ban', to: 'users/users#ban_user'
       post 'post/like', to: 'posts#upvote'
       post 'post/dislike', to: 'posts#downvote'
       post 'comment/like', to: 'comments#upvote'
