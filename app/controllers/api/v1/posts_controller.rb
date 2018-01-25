@@ -6,7 +6,8 @@ require_dependency 'app/services/users_vote'
 module Api
   module V1
     class PostsController < ApplicationController
-      before_action :authenticate_user, only: %i[create upvote downvote]
+      before_action :authenticate_user, only: %i[create upvote downvote destroy]
+      before_action :user_admin, only: :destroy
 
       def index
         @posts = Post.order(created_at: :desc)
@@ -61,17 +62,24 @@ module Api
 
       def upvote
         @post = Post.find(params[:post_id])
-        @messages = UsersVote.new(@user, @post).upvote
+        messages = UsersVote.new(@user, @post).upvote
 
-        render json: { messages: @messages },
+        render json: { messages: messages },
                status: :ok
       end
 
       def downvote
         @post = Post.find(params[:post_id])
-        @messages = UsersVote.new(@user, @post).downvote
+        messages = UsersVote.new(@user, @post).downvote
 
-        render json: { messages: @messages },
+        render json: { messages: messages },
+               status: :ok
+      end
+
+      def destroy
+        @post = Post.find(params[:id])
+        @post.destroy
+        render json: { messages: 'Post deleted' },
                status: :ok
       end
 

@@ -15,6 +15,13 @@ module Api
         @user
       end
 
+      def user_admin
+        unless @user.admin?
+          render json: { messages: 'Access denied' },
+                 status: :forbidden
+        end
+      end
+
       def unauthorize
         head status: :unauthorize
       end

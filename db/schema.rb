@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180125093909) do
+ActiveRecord::Schema.define(version: 20180125111951) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -129,6 +129,7 @@ ActiveRecord::Schema.define(version: 20180125093909) do
     t.integer "posts_count", default: 0
     t.integer "comments_count", default: 0
     t.float "rating", default: 0.0
+    t.integer "role", default: 0
     t.index ["email"], name: "index_users_on_email"
     t.index ["rating"], name: "index_users_on_rating"
     t.index ["token"], name: "index_users_on_token"

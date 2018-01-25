@@ -6,8 +6,9 @@ require_dependency 'app/services/comment_finder'
 module Api
   module V1
     class CommentsController < ApplicationController
-      before_action :authenticate_user, only: %i[create upvote downvote]
+      before_action :authenticate_user, only: %i[create upvote downvote destroy]
       before_action :find_commentable, only: %i[create show]
+      before_action :user_admin, only: :destroy
 
       def create
         @comment = @commentable.comments.new(comment_params)
@@ -68,6 +69,13 @@ module Api
                  each_serializer: TopCommentSerializer,
                  status: :ok
         end
+      end
+
+      def destroy
+        @comment = Comment.find(params[:id])
+        @comment.destroy
+        render json: { messages: 'Comment deleted' },
+               status: :ok
       end
 
       private
