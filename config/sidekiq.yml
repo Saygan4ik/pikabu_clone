@@ -15,3 +15,6 @@ production:
   set_post_status_as_hot:
     cron: '0 0 * * * *'   # Runs once per hour
     class: SetPostAsHotJob
+  unban_users:
+    cron: '0 0 * * * *'   # Runs once per hour
+    class: UnbanUsersJob
