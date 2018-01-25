@@ -4,6 +4,7 @@ class CreateTopComments < ActiveRecord::Migration[5.1]
       t.timestamp :date, null: false
       t.belongs_to :comment
       t.integer :rating
+      t.timestamps
     end
   end
 end

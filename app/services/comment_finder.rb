@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class TopComments
+class CommentFinder
   def initialize(params)
     @params = params
   end

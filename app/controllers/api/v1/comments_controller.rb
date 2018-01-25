@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 require_dependency 'app/services/users_vote'
-require_dependency 'app/services/top_comments'
+require_dependency 'app/services/comment_finder'
 
 module Api
   module V1
     class CommentsController < ApplicationController
       before_action :authenticate_user, only: %i[create upvote downvote]
-      before_action :find_commentable
+      before_action :find_commentable, only: %i[create show]
 
       def create
         @comment = @commentable.comments.new(comment_params)
@@ -46,19 +46,27 @@ module Api
       def top_comment
         end_date = Time.current
         start_date = end_date - 24.hours
-        @comment = TopComments.new([start_date, end_date]).find_top50.first
+        @comment = CommentFinder.new(start_date: start_date,
+                                     end_date: end_date).find_top50.first
         render json: @comment,
                status: :ok
       end
 
-      def top_50_comments
+      def top50_comments
         start_date = Time.parse(params[:date]).beginning_of_day if params[:date]
         if !start_date || start_date == Time.current.beginning_of_day
           start_date ||= Time.current.beginning_of_day
           end_date = start_date.end_of_day
-          @comments = TopComments.new([start_date, end_date]).find_top50
+          @top_comments = CommentFinder.new(start_date: start_date,
+                                            end_date: end_date).find_top50
+          render json: @top_comments,
+                 each_serializer: CommentSerializer,
+                 status: :ok
         else
-          #@comments = DB top_comments where date = start_day
+          @top_comments = TopComment.where(date: start_date)
+          render json: @top_comments,
+                 each_serializer: TopCommentSerializer,
+                 status: :ok
         end
       end
 

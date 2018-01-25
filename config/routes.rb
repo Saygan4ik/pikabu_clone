@@ -14,6 +14,8 @@ Rails.application.routes.draw do
       post 'post/dislike', to: 'posts#downvote'
       post 'comment/like', to: 'comments#upvote'
       post 'comment/dislike', to: 'comments#downvote'
+      get 'comments/top_of_day', to: 'comments#top_comment'
+      get 'comments/top50', to: 'comments#top50_comments'
       get 'favorites/contents', to: 'favorites#contents'
       post 'favorites/add', to: 'favoritecontents#add_to_favorites'
       delete 'favorites/remove', to: 'favoritecontents#remove_from_favorites'
