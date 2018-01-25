@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require_dependency 'app/services/comment_finder'
 
 class SaveTop50CommentsJob < ApplicationJob
   queue_as :default
 
-  def perform(*args)
+  def perform(*_args)
     start_date = (Time.current - 1.day).beginning_of_day
     end_date = start_date.end_of_day
     @comments = CommentFinder.new(start_date: start_date,
