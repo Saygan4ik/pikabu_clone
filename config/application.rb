@@ -33,5 +33,16 @@ module PikabuClone
     config.api_only = true
 
     config.active_job.queue_adapter = :sidekiq
+
+    # gem 'rack-attack' initial
+    config.middleware.use Rack::Attack
+
+    # gem 'rack-cors' settings
+    config.middleware.insert_before 0, Rack::Cors do
+      allow do
+        origins 'localhost:3000'
+        resource '*', headers: :any, methods: :any
+      end
+    end
   end
 end
