@@ -9,21 +9,28 @@ module Api
 
         def show
           @user = User.find(params[:id])
+          @user.posts_order = 'time' if params[:order] == 'time'
+          @user.posts_page = params[:page] if params[:page]
           render json: @user,
-                 serializer: UserprofileSerializer,
                  status: :ok
         end
 
         def ban_user
-          @user = User.find(params[user_id])
-          timeout_ban = set_timeout_ban
+          @user = User.find(params[:user_id])
+          timeout_ban = definition_timeout_ban(params[:ban_time])
           @user.update(isBanned: true, timeoutBan: timeout_ban)
+          render json: { messages: 'User banned' },
+                 status: :ok
+        rescue ArgumentError => e
+          render json: { error: e.message }, status: :bad_request
         end
 
         private
 
-        def set_timeout_ban
-          Time.current + params[:months].months + params[:days].days + params[:hours].hours
+        def definition_timeout_ban(ban_time)
+          raise ArgumentError, 'ban time must be a number' unless ban_time.is_i?
+          timeout_ban = Time.current.to_i + ban_time.to_i
+          Time.at(timeout_ban).to_datetime
         end
       end
     end

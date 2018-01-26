@@ -64,7 +64,7 @@ module Api
                  each_serializer: CommentSerializer,
                  status: :ok
         else
-          @top_comments = TopComment.where(date: start_date)
+          @top_comments = TopComment.where(date: start_date).order(rating: :desc)
           render json: @top_comments,
                  each_serializer: TopCommentSerializer,
                  status: :ok

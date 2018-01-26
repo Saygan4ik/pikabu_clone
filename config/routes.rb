@@ -38,4 +38,6 @@ Rails.application.routes.draw do
       root 'posts#index_hot'
     end
   end
+
+  mount Sidekiq::Web => '/sidekiq'
 end

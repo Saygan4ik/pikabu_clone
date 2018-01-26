@@ -3,6 +3,7 @@
 class User < ApplicationRecord
   has_secure_password
   acts_as_voter
+  attr_accessor :posts_order, :posts_page
   validates :nickname, :email, presence: true
   validates :nickname, :email, uniqueness: true
   validates_length_of :password, in: 6..72, allow_blank: true
