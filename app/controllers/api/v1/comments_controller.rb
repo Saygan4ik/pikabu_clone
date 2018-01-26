@@ -7,7 +7,7 @@ module Api
   module V1
     class CommentsController < ApplicationController
       before_action :authenticate_user, only: %i[create upvote downvote destroy]
-      before_action :find_commentable, only: %i[create show]
+      before_action :find_commentable, only: %i[create]
       before_action :user_admin, only: :destroy
 
       def create
@@ -25,6 +25,8 @@ module Api
       def show
         @comment = Comment.find(params[:id])
         render json: @comment,
+               include: { user: [:nickname],
+                          comments: [:user, comments: :comments] },
                status: :ok
       end
 

@@ -35,7 +35,7 @@ module Api
         @post = Post.find(params[:id])
         @post.comments_order = params[:order] if params[:order]
         render json: @post,
-               include: { comments: [:user, comments: :comments],
+               include: { comments: [user: [:username], comments: :comments],
                           user: [:nickname] },
                status: :ok
       end
