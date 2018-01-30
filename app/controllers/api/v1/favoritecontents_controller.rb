@@ -8,27 +8,22 @@ module Api
 
       def add_to_favorites
         favoritecontent = find_favoritecontent
-        if favoritecontent.empty?
-          @user.favoritecontents.create!(content: @content,
-                                         favorite_id: @favorite&.id)
-          render json: { messages: 'Added to favorites' },
-                 status: :ok
-        else
-          render json: { messages: 'Has been added already' },
-                 status: :ok
-        end
+        message = if favoritecontent.empty?
+                    @user.favoritecontents.create!(content: @content, favorite_id: @favorite&.id)
+                    'Added to favorites'
+                  else
+                    'Has been added already'
+                  end
+        render json: { messages: message },
+               status: :ok
       end
 
       def remove_from_favorites
         favoritecontent = find_favoritecontent
-        if favoritecontent.empty?
-          render json: { messages: 'not found' },
-                 status: :not_found
-        else
-          favoritecontent.destroy_all
-          render json: { messages: 'Remove from favorites' },
-                 status: :ok
-        end
+        raise ActiveRecord::RecordNotFound if favoritecontent.empty?
+        favoritecontent.destroy_all
+        render json: { messages: 'Remove from favorites' },
+               status: :ok
       end
 
       private

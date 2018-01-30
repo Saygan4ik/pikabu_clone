@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class UnbanUsersJob < ApplicationJob
-  queue_as :default
+class UnbanUsersWorker
+  include Sidekiq::Worker
 
   def perform(*_args)
     @users = User.where(isBanned: true)

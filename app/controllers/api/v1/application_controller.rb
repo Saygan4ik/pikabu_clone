@@ -4,7 +4,7 @@ module Api
   module V1
     class ApplicationController < ActionController::API
       rescue_from ActiveRecord::RecordNotFound do
-        render json: {}, status: 404
+        render json: {}, status: :not_found
       end
 
       def authenticate_user
@@ -15,7 +15,7 @@ module Api
         @user
       end
 
-      def user_admin
+      def authenticate_admin
         unless @user.admin?
           render json: { messages: 'Access denied' },
                  status: :forbidden

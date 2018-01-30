@@ -3,18 +3,15 @@
 module Api
   module V1
     class CommunitiesController < ApplicationController
-      before_action :authenticate_user, only: %i[subscribe unsubscribe posts_subscriptions]
+      before_action :authenticate_user,
+                    only: %i[subscribe unsubscribe posts_subscriptions]
 
       def index
         @communities = Community.all
-        if @communities
-          render json: @communities,
-                 each_serializer: CommunitySerializer,
-                 status: :ok
-        else
-          render json: { messages: 'Not found communities' },
-                 status: :ok
-        end
+        raise ActiveRecord::RecordNotFound unless @communities
+        render json: @communities,
+               each_serializer: CommunitySerializer,
+               status: :ok
       end
 
       def show
@@ -25,26 +22,27 @@ module Api
 
       def subscribe
         @community = Community.find(params[:id])
-        if @user.communities.exists?(@community.id)
-          render json: { messages: 'You are already subscribed' },
-                 status: :ok
-        else
-          @user.communities << @community
-          render json: { messages: 'Thank you to subscribed' },
-                 status: :ok
-        end
+        message = if @user.communities.exists?(@community.id)
+                    'You are already subscribed'
+                  else
+                    @user.communities << @community
+                    'Thank you to subscribed'
+                  end
+        render json: { messages: message },
+               status: :ok
       end
 
       def unsubscribe
         @community = Community.find(params[:id])
-        if @user.communities.exists?(@community.id)
-          @user.communities.delete(@community.id)
-          render json: { messages: 'You unsubscribed from community' },
-                 status: :ok
-        else
-          render json: { messages: 'You do not belong to the community' },
-                 status: :ok
-        end
+        message = if @user.communities.exists?(@community.id)
+                    @user.communities.delete(@community.id)
+                    'You unsubscribed from community'
+                  else
+                    'You do not belong to the community'
+                  end
+
+        render json: { messages: message },
+               status: :ok
       end
 
       def posts_new

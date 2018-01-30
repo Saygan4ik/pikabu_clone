@@ -6,7 +6,7 @@ class UserMailer < ApplicationMailer
   end
 
   def notification_if_post_set_hot(post)
-    @url = '' + root_path + 'posts/' + post.id
+    @url = api_v1_post_url(post)
     mail(to: post.user.email,
          subject: 'Your post has received the status of hot')
   end

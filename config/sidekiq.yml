@@ -12,10 +12,10 @@ production:
 :schedule:
   save_top_50_comments:
     cron: '0 5 0 * * *'   # Runs once per day in 0:05
-    class: SaveTop50CommentsJob
+    class: SaveTop50CommentsWorker
   set_post_status_as_hot:
     cron: '0 0 * * * *'   # Runs once per hour
-    class: SetPostAsHotJob
+    class: SetPostAsHotWorker
   unban_users:
     cron: '0 0 * * * *'   # Runs once per hour
-    class: UnbanUsersJob
+    class: UnbanUsersWorker

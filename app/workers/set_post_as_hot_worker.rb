@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class SetPostAsHotJob < ApplicationJob
-  queue_as :default
+class SetPostAsHotWorker
+  include Sidekiq::Worker
 
   def perform(*_args)
     @posts = Post.where(created_at: Time.current - 24.hours..Time.current)

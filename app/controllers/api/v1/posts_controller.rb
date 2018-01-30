@@ -4,7 +4,7 @@ module Api
   module V1
     class PostsController < ApplicationController
       before_action :authenticate_user, only: %i[create upvote downvote destroy]
-      before_action :user_admin, only: :destroy
+      before_action :authenticate_admin, only: :destroy
 
       def index
         @posts = Post.order(created_at: :desc)

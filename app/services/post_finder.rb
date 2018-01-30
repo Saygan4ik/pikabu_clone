@@ -10,23 +10,21 @@ class PostFinder
     hot
     setting_date_parameters
     setting_order_parameters
-    @posts.page(@params[:page]).per(@params[:per_page])
+    paginated_posts
   end
 
   def index_best
     @posts = Post.all
     setting_date_parameters
-    @posts
-      .order(cached_weighted_score: :desc)
-      .page(@params[:page]).per(@params[:per_page])
+    @posts = @posts.order(cached_weighted_score: :desc)
+    paginated_posts
   end
 
   def index_new
     @posts = Post.all
     setting_date_parameters
-    @posts
-      .order(created_at: :desc)
-      .page(@params[:page]).per(@params[:per_page])
+    @posts = @posts.order(created_at: :desc)
+    paginated_posts
   end
 
   def search
@@ -37,7 +35,7 @@ class PostFinder
     filter_tags
     filter_search_data
     setting_order_parameters
-    @posts.page(@params[:page]).per(@params[:per_page])
+    paginated_posts
   end
 
   private
@@ -92,5 +90,9 @@ class PostFinder
   def filter_user
     return unless @params[:user_id]
     @posts = @posts.where(user_id: @params[:user_id])
+  end
+
+  def paginated_posts
+    @posts.page(@params[:page]).per(@params[:per_page])
   end
 end

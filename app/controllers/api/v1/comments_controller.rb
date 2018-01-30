@@ -5,7 +5,7 @@ module Api
     class CommentsController < ApplicationController
       before_action :authenticate_user, only: %i[create upvote downvote destroy]
       before_action :find_commentable, only: %i[create]
-      before_action :user_admin, only: :destroy
+      before_action :authenticate_admin, only: :destroy
 
       def create
         @comment = @commentable.comments.new(comment_params)
@@ -29,17 +29,17 @@ module Api
 
       def upvote
         @comment = Comment.find(params[:comment_id])
-        @messages = UsersVote.new(@user, @comment).upvote
+        messages = UsersVote.new(@user, @comment).upvote
 
-        render json: { messages: @messages },
+        render json: { messages: messages },
                status: :ok
       end
 
       def downvote
         @comment = Comment.find(params[:comment_id])
-        @messages = UsersVote.new(@user, @comment).downvote
+        messages = UsersVote.new(@user, @comment).downvote
 
-        render json: { messages: @messages },
+        render json: { messages: messages },
                status: :ok
       end
 
@@ -55,18 +55,9 @@ module Api
       def top50_comments
         start_date = Time.parse(params[:date]).beginning_of_day if params[:date]
         if !start_date || start_date == Time.current.beginning_of_day
-          start_date ||= Time.current.beginning_of_day
-          end_date = start_date.end_of_day
-          @top_comments = CommentFinder.new(start_date: start_date,
-                                            end_date: end_date).find_top50
-          render json: @top_comments,
-                 each_serializer: CommentSerializer,
-                 status: :ok
+          load_top50_comments_last_day
         else
-          @top_comments = TopComment.where(date: start_date).order(rating: :desc)
-          render json: @top_comments,
-                 each_serializer: TopCommentSerializer,
-                 status: :ok
+          load_top50_comments_another_day(start_date)
         end
       end
 
@@ -78,6 +69,23 @@ module Api
       end
 
       private
+
+      def load_top50_comments_last_day
+        start_date ||= Time.current.beginning_of_day
+        end_date = start_date.end_of_day
+        @top_comments = CommentFinder.new(start_date: start_date,
+                                          end_date: end_date).find_top50
+        render json: @top_comments,
+               each_serializer: CommentSerializer,
+               status: :ok
+      end
+
+      def load_top50_comments_another_day(start_date)
+        @top_comments = TopComment.where(date: start_date).order(rating: :desc)
+        render json: @top_comments,
+               each_serializer: TopCommentSerializer,
+               status: :ok
+      end
 
       def comment_params
         params.require(:comment).permit(:text, :image)

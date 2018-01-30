@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-class SaveTop50CommentsJob < ApplicationJob
-  queue_as :default
+class SaveTop50CommentsWorker
+  include Sidekiq::Worker
 
   def perform(*_args)
     start_date = (Time.current - 1.day).beginning_of_day

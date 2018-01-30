@@ -7,32 +7,45 @@ Rails.application.routes.draw do
       post 'auth/register', to: 'users/registrations#register'
       patch 'auth/update', to: 'users/registrations#update'
 
-      get '', to: 'posts#index_hot'
       get 'best', to: 'posts#index_best'
       get 'new', to: 'posts#index_new'
       get 'search', to: 'posts#search'
-      post 'users/ban', to: 'users/users#ban_user'
-      post 'post/like', to: 'posts#upvote'
-      post 'post/dislike', to: 'posts#downvote'
-      post 'comment/like', to: 'comments#upvote'
-      post 'comment/dislike', to: 'comments#downvote'
-      get 'comments/top_of_day', to: 'comments#top_comment'
-      get 'comments/top50', to: 'comments#top50_comments'
-      get 'favorites/contents', to: 'favorites#contents'
-      post 'favorites/add', to: 'favoritecontents#add_to_favorites'
-      delete 'favorites/remove', to: 'favoritecontents#remove_from_favorites'
-      get 'communities/posts/subscriptions', to: 'communities#posts_subscriptions'
-      resources :users, only: [:show], controller: 'users/users'
-      resources :posts, except: [:edit, :update]
-      resources :comments, except: [:edit, :update]
-      resources :favorites, only: [:index, :show]
+      resources :users, only: [:show], controller: 'users/users' do
+        collection do
+          post :ban, to: 'users/users/#ban_user'
+        end
+      end
+      resources :posts, except: [:edit, :update] do
+        collection do
+          post :like, to: 'posts#upvote'
+          post :dislike, to: 'posts#downvote'
+        end
+      end
+      resources :comments, except: [:edit, :update] do
+        collection do
+          post :like, to: 'comments#upvote'
+          post :dislike, to: 'comments#downvote'
+          get :top_od_day, to: 'comments#top_comment'
+          get :top50, to: 'comments#top50_comments'
+        end
+      end
+      resources :favorites, only: [:index, :show] do
+        collection do
+          get :contents, to: 'favorites#contents'
+          post :add, to: 'favoritecontents#add_to_favorites'
+          delete :remove, to: 'favoritecontents#remove_from_favorites'
+        end
+      end
       resources :communities, only: [:index, :show] do
         member do
-          get 'subscribe'
-          get 'unsubscribe'
+          post 'subscribe'
+          post 'unsubscribe'
           get 'posts_new'
           get 'posts_hot'
           get 'posts_best'
+        end
+        collection do
+          get :posts_subscriptions, to: 'communities#posts_subscriptions'
         end
       end
 

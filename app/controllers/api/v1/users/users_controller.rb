@@ -5,7 +5,7 @@ module Api
     module Users
       class UsersController < ApplicationController
         before_action :authenticate_user, only: :ban_user
-        before_action :user_admin, only: :ban_user
+        before_action :authenticate_admin, only: :ban_user
 
         def show
           @user = User.find(params[:id])

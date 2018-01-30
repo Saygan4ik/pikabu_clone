@@ -13,29 +13,20 @@ module Api
 
       def show
         @favorites = @user.favoritecontents.find_by(favorite_id: params[:id])
-        if @favorites.empty?
-          render json: { messages: 'Not found' },
-                 status: :not_found
-        else
-          @response = []
-          load_contents
-          render json: @response,
-                 status: :ok
-        end
+        raise ActiveRecord::RecordNotFound if @favorites.empty?
+        @response = []
+        load_contents
+        render json: @response,
+               status: :ok
       end
 
       def contents
         @favorites = @user.favoritecontents
-        if @favorites.empty?
-          render json: { messages: 'Not found' },
-                 status: :not_found
-        else
-          @response = []
-          load_contents
-
-          render json: @response,
-                 status: :ok
-        end
+        raise ActiveRecord::RecordNotFound if @favorites.empty?
+        @response = []
+        load_contents
+        render json: @response,
+               status: :ok
       end
 
       private
