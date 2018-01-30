@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_dependency 'app/services/comment_finder'
-
 class SaveTop50CommentsJob < ApplicationJob
   queue_as :default
 

@@ -1,7 +1,5 @@
 # frozen_string_literal:true
 
-require_dependency 'app/services/post_finder'
-
 module Api
   module V1
     class CommunitiesController < ApplicationController

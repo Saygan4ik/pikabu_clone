@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_dependency 'app/services/post_finder'
-require_dependency 'app/services/users_vote'
-
 module Api
   module V1
     class PostsController < ApplicationController

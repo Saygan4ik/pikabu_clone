@@ -44,8 +44,5 @@ module PikabuClone
         resource '*', headers: :any, methods: :any
       end
     end
-
-    config.eager_load_paths << Rails.root.join("app", "services")
-    config.autoload_paths << Rails.root.join("app", "services")
   end
 end

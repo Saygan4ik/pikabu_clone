@@ -1,4 +1,8 @@
 # frozen_string_literal: true
 
-class TagsController < ApplicationController
+module Api
+  module V1
+    class TagsController < ApplicationController
+    end
+  end
 end

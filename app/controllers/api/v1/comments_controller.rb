@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_dependency 'app/services/users_vote'
-require_dependency 'app/services/comment_finder'
-
 module Api
   module V1
     class CommentsController < ApplicationController
