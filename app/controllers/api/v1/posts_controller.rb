@@ -13,17 +13,17 @@ module Api
         render_json
       end
 
-      def index_hot
+      def hot
         @posts = PostFinder.new(whitelisted_params).index_hot
         render_json
       end
 
-      def index_best
+      def best
         @posts = PostFinder.new(whitelisted_params).index_best
         render_json
       end
 
-      def index_new
+      def recent
         @posts = PostFinder.new(whitelisted_params).index_new
         render_json
       end

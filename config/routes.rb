@@ -17,8 +17,9 @@ Rails.application.routes.draw do
         collection do
           post :like, to: 'posts#upvote'
           post :dislike, to: 'posts#downvote'
-          get :best, to: 'posts#index_best'
-          get :new, to: 'posts#index_new'
+          get :hot
+          get :best
+          get :recent
           get :search, to: 'posts#search'
         end
       end
@@ -50,7 +51,7 @@ Rails.application.routes.draw do
         end
       end
 
-      root 'posts#index_hot'
+      root 'posts#hot'
     end
   end
 
