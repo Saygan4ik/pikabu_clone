@@ -4,5 +4,5 @@ RUN mkdir /pikabu_clone
 WORKDIR /pikabu_clone
 COPY Gemfile /pikabu_clone/Gemfile
 COPY Gemfile.lock /pikabu_clone/Gemfile.lock
-RUN bundle install
+ENV BUNDLE_PATH /gems
 COPY . /pikabu_clone

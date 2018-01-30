@@ -37,9 +37,10 @@ services:
 
   web:
     build: .
-    command: rails server -p 3000 -b 0.0.0.0
+    command: ./script/docker/puma.sh
     volumes:
       - .:/pikabu_clone
+      - app-gems:/gems
     environment:
       MAILCATCHER_HOST: mailcatcher
       REDIS_URL: redis://redis:6379
@@ -63,6 +64,7 @@ services:
     environment:
       MAILCATCHER_HOST: mailcatcher
       REDIS_URL: redis://redis:6379
-    command: sidekiq -C config/sidekiq.yml
+    command: ./script/docker/sidekiq.sh
     volumes:
       - .:/pikabu_clone
+      - app-gems:/gems
