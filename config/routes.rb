@@ -5,6 +5,7 @@ Rails.application.routes.draw do
       post 'auth/login', to: 'users/sessions#login'
       delete 'auth/logout', to: 'users/sessions#logout'
       post 'auth/register', to: 'users/registrations#register'
+      patch 'auth/update', to: 'users/registrations#update'
 
       get '', to: 'posts#index_hot'
       get 'best', to: 'posts#index_best'
