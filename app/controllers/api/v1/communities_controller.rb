@@ -26,7 +26,7 @@ module Api
                     'You are already subscribed'
                   else
                     @user.communities << @community
-                    'Thank you to subscribed'
+                    'Thank you to subscribe'
                   end
         render json: { messages: message },
                status: :ok
@@ -36,7 +36,7 @@ module Api
         @community = Community.find(params[:id])
         message = if @user.communities.exists?(@community.id)
                     @user.communities.delete(@community.id)
-                    'You unsubscribed from community'
+                    'You unsubscribe from community'
                   else
                     'You do not belong to the community'
                   end
