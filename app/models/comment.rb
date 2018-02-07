@@ -6,5 +6,13 @@ class Comment < ApplicationRecord
   belongs_to :top_comment, optional: true
   belongs_to :user, counter_cache: true
   belongs_to :commentable, polymorphic: true
+  before_destroy :re_count_rating_user, prepend: true
   has_many :comments, as: :commentable, dependent: :destroy
+
+  private
+
+  def re_count_rating_user
+    self.user.rating -= self.cached_weighted_score * 0.5
+    self.user.save
+  end
 end

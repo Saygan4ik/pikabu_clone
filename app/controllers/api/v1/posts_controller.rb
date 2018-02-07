@@ -32,9 +32,10 @@ module Api
         @post = Post.find(params[:id])
         @post.comments_order = params[:order] if params[:order]
         render json: @post,
-               include: { comments: [user: [:username], comments: :comments],
+               include: { comments: [:commentable, user: [:nickname], comments: :comments],
                           user: [:nickname],
-                          tags: [:name] },
+                          tags: [:name],
+                          community: [:name] },
                status: :ok
       end
 
@@ -93,7 +94,7 @@ module Api
       end
 
       def whitelisted_params
-        params.permit(:search_data, :tags, :user_id,
+        params.permit(:search_data, :tags, :user_id, :rating,
                       :start_date, :end_date,
                       :order, :order_by,
                       :page, :per_page)

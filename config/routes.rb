@@ -20,15 +20,15 @@ Rails.application.routes.draw do
           get :hot
           get :best
           get :recent
-          get :search, to: 'posts#search'
+          get :search
         end
       end
       resources :comments, except: [:edit, :update] do
         collection do
           post :like, to: 'comments#upvote'
           post :dislike, to: 'comments#downvote'
-          get :top_od_day, to: 'comments#top_comment'
-          get :top50, to: 'comments#top50_comments'
+          get :top_comment
+          get :top50_comments
         end
       end
       resources :favorites, only: [:index, :show] do

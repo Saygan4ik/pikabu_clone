@@ -9,9 +9,9 @@ module Api
 
       def authenticate_user
         token = request.headers['X-USER-TOKEN']
-        return unauthorize unless token
+        return unauthorized unless token
         @user = User.find_by_token(token)
-        return unauthorize unless @user && !@user.isBanned?
+        return unauthorized unless @user && !@user.isBanned?
         @user
       end
 
@@ -22,8 +22,9 @@ module Api
         end
       end
 
-      def unauthorize
-        head status: :unauthorize
+      def unauthorized
+        render json: { messages: 'Unauthorized' },
+               status: :unauthorized
       end
 
       def pagination_dict(collection)

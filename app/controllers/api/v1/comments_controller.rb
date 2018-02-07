@@ -22,7 +22,8 @@ module Api
       def show
         @comment = Comment.find(params[:id])
         render json: @comment,
-               include: { user: [:nickname],
+               include: { commentable: [],
+                          user: [:nickname],
                           comments: [:user, comments: :comments] },
                status: :ok
       end

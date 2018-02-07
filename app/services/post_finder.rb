@@ -71,12 +71,13 @@ class PostFinder
     return unless rating
     raise ArgumentError, 'rating must be a number' unless rating.is_i?
 
-    @posts = @posts.where('cached_weighted_score >= :rating', rating: rating.to_i)
+    @posts = @posts.where('cached_weighted_score >= ?', rating.to_i)
   end
 
   def filter_tags
-    return unless @params[:tags]
+    return unless @params[:tags] && !@params[:tags].empty?
     @posts = @posts.joins(:tags)
+
     @params[:tags].split(' ').each do |tag|
       @posts = @posts.where(tags: { name: tag })
     end
@@ -84,7 +85,7 @@ class PostFinder
 
   def filter_search_data
     return unless @params[:search_data]
-    @posts = @posts.where('title LIKE ?', "%#{@params[:search_data]}%")
+    @posts = @posts.where('title ILIKE ?', "%#{@params[:search_data]}%")
   end
 
   def filter_user

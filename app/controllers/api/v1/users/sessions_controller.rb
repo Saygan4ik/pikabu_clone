@@ -4,6 +4,7 @@ module Api
   module V1
     module Users
       class SessionsController < ApplicationController
+        before_action :authenticate_user, only: :logout
         def login
           @user = User.find_by(email: params[:email]).try(:authenticate, params[:password])
           if @user
@@ -22,12 +23,10 @@ module Api
         end
 
         def logout
-          if authenticate_user
-            @user.token = nil
-            @user.save
-            render json: { messages: 'Logout successfully' },
-                   status: :ok
-          end
+          @user.token = nil
+          @user.save
+          render json: { messages: 'Logout successfully' },
+                         status: :ok
         end
 
         private

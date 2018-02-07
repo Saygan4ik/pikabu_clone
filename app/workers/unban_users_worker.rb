@@ -6,9 +6,7 @@ class UnbanUsersWorker
   def perform(*_args)
     @users = User.where(isBanned: true)
     @users.each do |user|
-      if Time.current > user.timeoutBan
-        user.update(isBanned: false, timeoutBan: nil)
-      end
+      user.update!(isBanned: false, timeoutBan: nil) if Time.current > user.timeoutBan1
     end
   end
 end

@@ -4,13 +4,11 @@ class SetPostAsHotWorker
   include Sidekiq::Worker
 
   def perform(*_args)
-    @posts = Post.where(created_at: Time.current - 24.hours..Time.current)
-                 .where(isHot: false)
+    @posts = Post.where(isHot: false,
+                        created_at: Time.current - 24.hours..Time.current)
     @posts.each do |post|
-      if post.cached_votes_score >= 100
-        post.update(isHot: true)
-        UserMailer.deliver_notification_if_post_set_hot(post).deliver_later
-      end
+      next unless post.cached_votes_score >= 100
+      post.update(isHot: true)
     end
   end
 end
