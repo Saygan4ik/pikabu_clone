@@ -7,12 +7,17 @@ module Api
 
       def index
         @favorites = @user.favorites.uniq
-        render json: @favorites,
-               status: :ok
+        if @favorites.empty?
+          render json: { messages: 'No favorites created' },
+                 status: :ok
+        else
+          render json: @favorites,
+                 status: :ok
+        end
       end
 
       def show
-        @favorites = @user.favoritecontents.find_by(favorite_id: params[:id])
+        @favorites = @user.favoritecontents.where(favorite_id: params[:id])
         raise ActiveRecord::RecordNotFound if @favorites.empty?
         @response = []
         load_contents
