@@ -2,15 +2,13 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   namespace :api do
     namespace :v1 do
-      namespace :auth do
-        post 'login', to: 'users/sessions#login'
-        delete 'logout', to: 'users/sessions#logout'
-        post 'register', to: 'users/registrations#register'
-        patch 'update', to: 'users/registrations#update'
-      end
-      resources :users, only: [:show], controller: 'users/users' do
+      post 'auth/login', to: 'users/sessions#login'
+      delete 'auth/logout', to: 'users/sessions#logout'
+      post 'auth/register', to: 'users/registrations#register'
+      patch 'auth/update', to: 'users/registrations#update'
+      resources :users, only: [:show] do
         collection do
-          post :ban, to: 'users/users/#ban_user'
+          post :ban, to: 'users/users#ban_user'
         end
       end
       resources :posts, except: [:edit, :update] do
