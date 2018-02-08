@@ -6,7 +6,7 @@ Rails.application.routes.draw do
       delete 'auth/logout', to: 'users/sessions#logout'
       post 'auth/register', to: 'users/registrations#register'
       patch 'auth/update', to: 'users/registrations#update'
-      resources :users, only: [:show] do
+      resources :users, only: [:show], controller: 'users/users' do
         collection do
           post :ban, to: 'users/users#ban_user'
         end
