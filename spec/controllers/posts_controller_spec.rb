@@ -106,7 +106,8 @@ describe Api::V1::PostsController do
       end
 
       it 'receive 1 post' do
-        expect(json_response['post']).to eq(JSON.parse(PostSerializer.new(post1).to_json))
+        expect(json_response['post'])
+          .to eq(JSON.parse(PostSerializer.new(post1).to_json))
       end
 
       context 'with comments' do
@@ -171,8 +172,8 @@ describe Api::V1::PostsController do
     let!(:post4) { create(:post, title: 'aaa', created_at: Time.current - 3.days) }
 
     context 'and getting search_data params' do
+      let(:response) { get :search, params: { search_data: 'aaa bbb' } }
       it 'receive 1 post' do
-        get :search, params: { search_data: 'aaa bbb' }
         expect(json_response['posts'])
           .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
                               .new([post1]).to_json)['posts'])
@@ -180,8 +181,8 @@ describe Api::V1::PostsController do
     end
 
     context 'and no getting params start_date, end_date' do
+      let(:response) { get :search, params: { search_data: 'aaa' } }
       it 'receive all posts' do
-        get :search, params: { search_data: 'aaa' }
         expect(json_response['posts'])
           .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
                               .new([post1, post2, post3, post4]).to_json)['posts'])
@@ -189,8 +190,8 @@ describe Api::V1::PostsController do
     end
 
     context 'and getting params start_date' do
+      let(:response) { get :search, params: { search_data: 'aaa', start_date: Time.current - 2.days } }
       it 'receive 3 posts' do
-        get :search, params: { search_data: 'aaa', start_date: Time.current - 2.days }
         expect(json_response['posts'])
           .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
                               .new([post1, post2, post3]).to_json)['posts'])
@@ -198,8 +199,8 @@ describe Api::V1::PostsController do
     end
 
     context 'and getting params end_date' do
+      let(:response) { get :search, params: { search_data: 'aaa', end_date: Time.current - 1.days } }
       it 'receive 2 posts' do
-        get :search, params: { search_data: 'aaa', end_date: Time.current - 1.days }
         expect(json_response['posts'])
           .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
                               .new([post3, post4]).to_json)['posts'])
@@ -207,51 +208,58 @@ describe Api::V1::PostsController do
     end
 
     context 'and getting params start_date, end_date' do
+      let(:response) { get :search, params: { search_data: 'aaa',
+                                              start_date: Time.current - 2.days,
+                                              end_date: Time.current - 1.days } }
       it 'receive 1 posts' do
-        get :search, params: { search_data: 'aaa',
-                               start_date: Time.current - 2.days,
-                               end_date: Time.current - 1.days }
         expect(json_response['posts'])
           .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
                               .new([post3]).to_json)['posts'])
       end
+
+      context 'is not valid' do
+        let(:response) { get :search, params: { search_data: 'aaa', start_date: '2018-99-99' } }
+        it 'raise ArgumentError' do
+          expect { response }.to raise_error(ArgumentError)
+        end
+      end
     end
 
-    context 'and getting params order and order_by' do
-      it 'receive 1,2,3,4 posts with time-desc' do
-        get :search, params: { search_data: 'aaa',
-                               order: 'time',
-                               order_by: 'desc' }
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post1, post2, post3, post4]).to_json)['posts'])
+    context 'and getting params' do
+      context 'order: time, order_by: desc' do
+        let(:response) { get :search, params: { search_data: 'aaa', order: 'time', order_by: 'desc' } }
+        it 'receive 1,2,3,4 posts' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post1, post2, post3, post4]).to_json)['posts'])
+        end
       end
 
-      it 'receive 4,3,2,1 posts with time-asc' do
-        get :search, params: { search_data: 'aaa',
-                               order: 'time',
-                               order_by: 'asc' }
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post4, post3, post2, post1]).to_json)['posts'])
+      context 'order: time, order_by: asc' do
+        let(:response) { get :search, params: { search_data: 'aaa', order: 'time', order_by: 'asc' } }
+        it 'receive 4,3,2,1 posts' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post4, post3, post2, post1]).to_json)['posts'])
+        end
       end
 
-      it 'receive 1,2,3,4 posts with rating-asc' do
-        get :search, params: { search_data: 'aaa',
-                               order: 'rating',
-                               order_by: 'asc' }
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post4, post3, post2, post1]).to_json)['posts'])
+      context 'order: rating, order_by: asc' do
+        let(:response) { get :search, params: { search_data: 'aaa', order: 'rating', order_by: 'asc' } }
+        it 'receive 1,2,3,4 posts' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post4, post3, post2, post1]).to_json)['posts'])
+        end
       end
 
-      it 'receive 4,3,2,1 posts with rating-desc' do
-        get :search, params: { search_data: 'aaa',
-                               order: 'rating',
-                               order_by: 'desc' }
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post1, post2, post3, post4]).to_json)['posts'])
+      context 'order: rating, order_by: desc' do
+        let(:response) { get :search, params: { search_data: 'aaa', order: 'rating', order_by: 'desc' } }
+        it 'receive 4,3,2,1 posts' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post1, post2, post3, post4]).to_json)['posts'])
+        end
       end
     end
 
@@ -259,46 +267,63 @@ describe Api::V1::PostsController do
       let!(:user1) { create(:user) }
       let!(:user2) { create(:user) }
       let!(:post5) { create(:post, title: 'aaa', user_id: user1.id) }
-      it 'receive post5' do
-        get :search, params: { search_data: 'aaa', user_id: user1.id }
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post5]).to_json)['posts'])
+      context 'and user have posts' do
+        let(:response) { get :search, params: { search_data: 'aaa', user_id: user1.id } }
+        it 'receive post5' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post5]).to_json)['posts'])
+        end
       end
 
-      it 'return empty array' do
-        get :search, params: { search_data: 'aaa', user_id: user2.id }
-        expect(json_response['posts']).to eq([])
+      context 'and user don\'t have posts' do
+        let(:response) { get :search, params: { search_data: 'aaa', user_id: user2.id } }
+        it 'return empty array' do
+          expect(json_response['posts']).to eq([])
+        end
       end
     end
 
     context 'and getting rating' do
+      let(:response) { get :search, params: { search_data: 'aaa', rating: '2' } }
       it 'receive 2 posts' do
-        get :search, params: { search_data: 'aaa', rating: '2' }
         expect(json_response['posts'])
           .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
                               .new([post1, post2]).to_json)['posts'])
       end
+      context 'is not a number' do
+        let(:response) { get :search, params: { search_data: 'aaa', rating: 'a' } }
+        it 'raise ArgumentError' do
+          expect { response }.to raise_error(ArgumentError)
+        end
+      end
     end
 
     context 'and getting tags' do
-      it 'receive 2 posts' do
-        get :search, params: { search_data: 'aaa', tags: 'tag2' }
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post1, post3]).to_json)['posts'])
+      context 'in the number of one' do
+        let(:response) { get :search, params: { search_data: 'aaa', tags: 'tag2' } }
+        it 'receive 2 posts' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post1, post3]).to_json)['posts'])
+        end
       end
 
-      it 'receive 1 post' do
-        get :search, params: { search_data: 'aaa', tags: 'tag2 tag3' }
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post3]).to_json)['posts'])
+      context 'in the number two or more' do
+        let(:response) { get :search, params: { search_data: 'aaa', tags: 'tag2 tag3' } }
+        it 'receive 1 post' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post3]).to_json)['posts'])
+        end
       end
 
-      it 'return empty array' do
-        get :search, params: { search_data: 'aaa', tags: 'tag4' }
-        expect(json_response['posts']).to eq([])
+
+      context 'which do not exists' do
+        let(:response) { get :search, params: { search_data: 'aaa', tags: 'tag4' } }
+        it 'raise ArgumentError' do
+          expect { response }.to raise_error(ArgumentError)
+        end
       end
     end
   end
@@ -317,8 +342,6 @@ describe Api::V1::PostsController do
       before(:each) do
         request.headers.merge! headers
       end
-      let!(:post_count) { Post.count }
-      let!(:tag_count) { Tag.count }
       let(:response) { post :create, params: { post: { title: 'title', text: 'text', tags: 'tag1 tag2' } } }
 
       it 'return 200' do
@@ -326,13 +349,11 @@ describe Api::V1::PostsController do
       end
 
       it 'quantity posts increased' do
-        response
-        expect(Post.count).to eq(post_count + 1)
+        expect { response }.to change { Post.count }.by(1)
       end
 
       it 'saving new tags' do
-        response
-        expect(Tag.count).to eq(tag_count + 2)
+        expect { response }.to change { Tag.count }.by(2)
       end
     end
   end
@@ -353,7 +374,6 @@ describe Api::V1::PostsController do
       end
       let!(:post1) { create(:post, user_id: user.id) }
       let(:response) { delete :destroy, params: { id: post1.id } }
-      let!(:post_count) { Post.count }
 
       context 'and user is not admin' do
         it 'return forbidden' do
@@ -366,7 +386,12 @@ describe Api::V1::PostsController do
           user.role = :admin
           user.save
           expect(response).to be_success
-          expect(Post.count).to eq(post_count - 1)
+        end
+
+        it 'decreases posts count by 1' do
+          user.role = :admin
+          user.save
+          expect { response }.to change { Post.count }.by(-1)
         end
 
         context 'and after deleting' do
@@ -378,7 +403,9 @@ describe Api::V1::PostsController do
           let(:response) { delete :destroy, params: { id: post2.id } }
 
           it 're-count users rating' do
-            expect{ response }.to change{ user1.reload.rating }.from(3).to(0)
+            user.role = :admin
+            user.save
+            expect { response }.to change{ user1.reload.rating }.from(3).to(0)
           end
         end
       end

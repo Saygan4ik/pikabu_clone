@@ -3,6 +3,7 @@
 class Post < ApplicationRecord
   attr_accessor :comments_order
   acts_as_votable
+  searchkick searchable: [:title], word_start: [:title], callbacks: :async
   mount_uploaders :files, PostFilesUploader
   validates :title, presence: true
   belongs_to :user, counter_cache: true
@@ -11,7 +12,19 @@ class Post < ApplicationRecord
   before_destroy :re_count_rating_user, prepend: true
   has_many :comments, as: :commentable, dependent: :destroy
 
-  after_update :send_hot_email, if: :isHot_changed?
+  after_update :send_hot_email, if: :saved_change_to_isHot?
+
+  def search_data
+    {
+      title: title,
+      rating: cached_weighted_score,
+      created_at: created_at.to_i,
+      isHot: isHot,
+      user_id: user_id,
+      community_id: community_id,
+      tag_ids: tag_ids
+    }
+  end
 
   private
 
@@ -20,7 +33,7 @@ class Post < ApplicationRecord
   end
 
   def re_count_rating_user
-    self.user.rating -= self.cached_weighted_score
-    self.user.save
+    user.rating -= cached_weighted_score
+    user.save
   end
 end

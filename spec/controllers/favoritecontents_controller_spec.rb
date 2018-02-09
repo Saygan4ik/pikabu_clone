@@ -33,7 +33,7 @@ describe Api::V1::FavoritecontentsController do
           end
 
           it 'increased contents count' do
-            expect{ response }.to change{ user.favoritecontents.count }.from(0).to(1)
+            expect { response }.to change { user.favoritecontents.count }.by(1)
           end
         end
 
@@ -79,7 +79,7 @@ describe Api::V1::FavoritecontentsController do
         end
 
         it 'decreased contents count' do
-          expect{ response }.to change{ user.favoritecontents.count }.from(1).to(0)
+          expect { response }.to change { user.favoritecontents.count }.by(-1)
         end
       end
     end

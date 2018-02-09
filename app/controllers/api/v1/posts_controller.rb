@@ -56,7 +56,6 @@ module Api
 
       def search
         @posts = PostFinder.new(whitelisted_params).search
-
         render_json
       end
 
@@ -101,8 +100,9 @@ module Api
       end
 
       def render_json
-        render json: @posts,
+        render json: @posts.to_a,
                each_serializer: PostSerializer,
+               root: :posts,
                meta: pagination_dict(@posts),
                status: :ok
       rescue ArgumentError => e

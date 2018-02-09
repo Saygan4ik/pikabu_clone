@@ -30,6 +30,7 @@ gem 'sidekiq'
 gem 'sidekiq-scheduler'
 gem 'rspec-rails'
 gem 'factory_bot_rails'
+gem 'searchkick'
 
 group :development, :test do
   gem 'dotenv-rails'

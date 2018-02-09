@@ -44,11 +44,14 @@ services:
     environment:
       MAILCATCHER_HOST: mailcatcher
       REDIS_URL: redis://redis:6379
+      ELASTICSEARCH_URL: http://elasticsearch:9200
     ports:
       - "3000:3000"
     depends_on:
       - postgres
       - redis
+    tty: true
+    stdin_open: true
 
   mailcatcher:
     image: yappabe/mailcatcher
@@ -68,3 +71,8 @@ services:
     volumes:
       - .:/pikabu_clone
       - app-gems:/gems
+
+  elasticsearch:
+    image: elasticsearch:latest
+    ports:
+      - "9200:9200"

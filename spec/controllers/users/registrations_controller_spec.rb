@@ -13,7 +13,7 @@ describe Api::V1::Users::RegistrationsController do
     end
 
     it 'increased quantity users' do
-      expect { response }.to change{ User.count }.from(0).to(1)
+      expect { response }.to change { User.count }.by(1)
     end
   end
 
@@ -47,7 +47,7 @@ describe Api::V1::Users::RegistrationsController do
         end
 
         it 'changed password' do
-          expect{ response }.to change{ user.reload.password_digest }
+          expect { response }.to change { user.reload.password_digest }
         end
       end
     end

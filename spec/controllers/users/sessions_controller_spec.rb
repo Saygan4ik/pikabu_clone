@@ -47,7 +47,7 @@ describe Api::V1::Users::SessionsController do
       end
 
       it 'user token set to nil' do
-        expect{ response }.to change{ user.reload.token }.from('token').to(nil)
+        expect { response }.to change { user.reload.token }.from('token').to(nil)
       end
     end
   end

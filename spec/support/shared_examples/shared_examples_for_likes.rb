@@ -38,13 +38,13 @@ RSpec.shared_examples 'upvote examples' do |object_type|
       end
 
       it "rating upgrade on #{object_type}" do
-        expect{ response }
-          .to change{ object.reload.cached_weighted_score }.from(0).to(1)
+        expect { response }
+          .to change { object.reload.cached_weighted_score }.from(0).to(1)
       end
 
       it 'rating upgrade on user' do
-        expect{ response }.to change{ object.reload.user.rating }.from(0).to(1) if object_type == 'Post'
-        expect{ response }.to change{ object.reload.user.rating }.from(0).to(0.5) if object_type == 'Comment'
+        expect { response }.to change { object.reload.user.rating }.by(1) if object_type == 'Post'
+        expect { response }.to change { object.reload.user.rating }.by(0.5) if object_type == 'Comment'
       end
 
       context 'and was previously delivered to the like' do
@@ -58,8 +58,7 @@ RSpec.shared_examples 'upvote examples' do |object_type|
         end
 
         it "rating not upgrade on #{object_type}" do
-          expect{ response }
-            .to change{ object.cached_weighted_score }.by(0)
+          expect { response }.to change { object.reload.cached_weighted_score }.by(0)
         end
       end
 
@@ -74,8 +73,7 @@ RSpec.shared_examples 'upvote examples' do |object_type|
         end
 
         it "rating upgrade on #{object_type}" do
-          expect{ response }
-            .to change{ object.reload.cached_weighted_score }.from(-1).to(0)
+          expect { response }.to change { object.reload.cached_weighted_score }.by(1)
         end
       end
     end

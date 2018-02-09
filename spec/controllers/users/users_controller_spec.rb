@@ -66,11 +66,11 @@ describe Api::V1::Users::UsersController do
           end
 
           it 'banned user is set to a isBanned' do
-            expect{ response }.to change{ user2.reload.isBanned }.from(false).to(true)
+            expect { response }.to change { user2.reload.isBanned }.from(false).to(true)
           end
 
           it 'banned user is set to a timeout' do
-            expect{ response }.to change{ user2.reload.timeoutBan }
+            expect { response }.to change { user2.reload.timeoutBan }
           end
 
           context 'and get incorrect ban_time' do

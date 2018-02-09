@@ -27,19 +27,21 @@ describe Api::V1::CommentsController do
 
       context 'and post exists' do
         let!(:post1) { create(:post, user_id: user.id) }
-        let!(:comments_count) { Comment.count }
-        let!(:post_comments_count) { post1.comments.count }
-        let!(:user_comments_count) { user.comments.count }
         let(:response) { post :create, params: { post_id: post1.id, comment: { text: 'text' } } }
         it 'return 200' do
           expect(response).to be_success
         end
 
         it 'quantity comments increased' do
-          response
-          expect(Comment.count).to eq(comments_count + 1)
-          expect(post1.reload.comments.count).to eq(post_comments_count + 1)
-          expect(user.reload.comments.count).to eq(user_comments_count + 1)
+          expect { response }.to change { Comment.count }.by(1)
+        end
+
+        it 'quantity comments to from post' do
+          expect { response }.to change { post1.comments.count }.by(1)
+        end
+
+        it 'quantity comments to user' do
+          expect { response }.to change { user.comments.count }.by(1)
         end
       end
     end
@@ -174,7 +176,6 @@ describe Api::V1::CommentsController do
       let!(:comment1) { create(:comment, commentable: post1) }
       let!(:comment2) { create(:comment, commentable: comment1) }
       let(:response) { delete :destroy, params: { id: comment1.id } }
-      let!(:comments_count) { Comment.count }
 
       context 'and user is not admin' do
         it 'return forbidden' do
@@ -183,11 +184,10 @@ describe Api::V1::CommentsController do
       end
 
       context 'and user is admin' do
-        it 'return success' do
+        it 'quantity comments decreased' do
           user.role = :admin
           user.save
-          expect(response).to be_success
-          expect(Comment.count).to eq(comments_count - 2)
+          expect { response }.to change { Comment.count }.by(-2)
         end
       end
     end

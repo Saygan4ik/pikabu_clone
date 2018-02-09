@@ -47,25 +47,22 @@ module Api
 
       def posts_new
         @posts = PostFinder.new(whitelisted_params).index_new
-        @posts = @posts.where(community_id: params[:id])
         render_json
       end
 
       def posts_hot
         @posts = PostFinder.new(whitelisted_params).index_hot
-        @posts = @posts.where(community_id: params[:id])
         render_json
       end
 
       def posts_best
         @posts = PostFinder.new(whitelisted_params).index_best
-        @posts = @posts.where(community_id: params[:id])
         render_json
       end
 
       def posts_subscriptions
+        raise ActiveRecord::RecordNotFound, 'no subscriptions' if @user.communities.empty?
         @posts = PostFinder.new(whitelisted_params).index_new
-        @posts = @posts.where(community_id: @user.communities)
         render_json
       end
 
@@ -75,6 +72,12 @@ module Api
         params.permit(:start_date, :end_date,
                       :order, :order_by,
                       :page, :per_page)
+        params[:community_id] = if params[:id].present?
+                                  params[:id]
+                                else
+                                  @user.community_ids
+                                end
+        params
       end
 
       def render_json

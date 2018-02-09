@@ -136,7 +136,7 @@ describe Api::V1::CommunitiesController do
     it 'return 2 posts' do
       expect(json_response['posts'])
         .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                            .new([posts_with_community[1], posts_with_community[0]]).to_json)['posts'])
+                            .new(posts_with_community).to_json)['posts'])
     end
   end
 
@@ -161,16 +161,27 @@ describe Api::V1::CommunitiesController do
       before(:each) do
         request.headers.merge! headers
       end
-      it 'return 200' do
-        expect(response).to be_success
+      context 'and don\'t have subscriptions' do
+        it 'return 404' do
+          expect(response).to be_not_found
+        end
       end
-      it 'receive 2 posts' do
-        user.communities << community1
-        user.communities << community2
-        user.save
-        expect(json_response['posts'])
-          .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                              .new([post_with_community2, post_with_community1]).to_json)['posts'])
+
+      context 'and have subscriptions' do
+        before do
+          user.communities << community1
+          user.communities << community2
+          user.save
+        end
+        it 'return 200' do
+          expect(response.status).to be(200)
+        end
+
+        it 'receive 2 posts' do
+          expect(json_response['posts'])
+            .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
+                                .new([post_with_community1, post_with_community2]).to_json)['posts'])
+        end
       end
     end
   end
