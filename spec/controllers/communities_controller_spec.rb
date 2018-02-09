@@ -131,12 +131,12 @@ describe Api::V1::CommunitiesController do
   context 'when action posts_new' do
     let(:community) { create(:community) }
     let!(:posts_without_community) { create_list(:post, 2) }
-    let!(:posts_with_community) { create_list(:post, 2, community_id: community.id) }
+    let!(:post_with_community) { create(:post, community_id: community.id) }
     let(:response) { get :posts_new, params: { id: community.id } }
-    it 'return 2 posts' do
+    it 'return 1 posts' do
       expect(json_response['posts'])
         .to eq(JSON.parse(ActiveModelSerializers::SerializableResource
-                            .new(posts_with_community).to_json)['posts'])
+                            .new([post_with_community]).to_json)['posts'])
     end
   end
 

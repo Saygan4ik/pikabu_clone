@@ -47,7 +47,7 @@ describe Api::V1::Users::RegistrationsController do
         end
 
         it 'changed password' do
-          expect { response }.to change { user.reload.password_digest }
+          expect { response }.to(change { user.reload.password_digest })
         end
       end
     end

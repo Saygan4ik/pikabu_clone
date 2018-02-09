@@ -12,7 +12,6 @@ class Comment < ApplicationRecord
   private
 
   def re_count_rating_user
-    self.user.rating -= self.cached_weighted_score * 0.5
-    self.user.save
+    user.decrement!(:rating, cached_weighted_score * 0.5)
   end
 end

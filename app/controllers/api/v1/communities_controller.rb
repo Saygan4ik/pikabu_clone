@@ -62,22 +62,18 @@ module Api
 
       def posts_subscriptions
         raise ActiveRecord::RecordNotFound, 'no subscriptions' if @user.communities.empty?
-        @posts = PostFinder.new(whitelisted_params).index_new
+        @posts = PostFinder.new(whitelisted_params.merge(community_id: @user.community_ids)).index_new
         render_json
       end
 
       private
 
       def whitelisted_params
-        params.permit(:start_date, :end_date,
-                      :order, :order_by,
-                      :page, :per_page)
-        params[:community_id] = if params[:id].present?
-                                  params[:id]
-                                else
-                                  @user.community_ids
-                                end
-        params
+        permitted_params = params.permit(:start_date, :end_date,
+                                         :order, :order_by,
+                                         :page, :per_page)
+        permitted_params[:community_id] = params[:id]
+        permitted_params
       end
 
       def render_json

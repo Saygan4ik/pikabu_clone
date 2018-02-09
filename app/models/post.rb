@@ -33,7 +33,6 @@ class Post < ApplicationRecord
   end
 
   def re_count_rating_user
-    user.rating -= cached_weighted_score
-    user.save
+    user.decrement!(:rating, cached_weighted_score)
   end
 end

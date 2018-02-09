@@ -26,7 +26,7 @@ module Api
           @user.token = nil
           @user.save
           render json: { messages: 'Logout successfully' },
-                         status: :ok
+                 status: :ok
         end
 
         private
