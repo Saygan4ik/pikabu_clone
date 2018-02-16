@@ -6,15 +6,14 @@ SignInMutation = GraphQL::Relay::Mutation.define do
   input_field :email, !types.String
   input_field :password, !types.String
 
-  return_field :message, types.String
+  return_field :token, types.String
 
-  resolve lambda { |_obj, inputs, ctx|
+  resolve lambda { |_obj, inputs, _ctx|
     user = User.find_by(email: inputs[:email]).try(:authenticate, inputs[:password])
     if user
       user.token = regenerate_token
       if user.save
-        ctx[:session][:token] = user.token
-        { message: 'Sign in successfully' }
+        { token: user.token }
       else
         raise(ActiveRecord::RecordInvalid, user.errors.full_messages.join(', '))
       end
