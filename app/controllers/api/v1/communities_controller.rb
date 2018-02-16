@@ -69,11 +69,9 @@ module Api
       private
 
       def whitelisted_params
-        permitted_params = params.permit(:start_date, :end_date,
-                                         :order, :order_by,
-                                         :page, :per_page)
-        permitted_params[:community_id] = params[:id]
-        permitted_params
+        params.permit(:start_date, :end_date,
+                      :order, :order_by,
+                      :page, :per_page)
       end
 
       def render_json

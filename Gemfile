@@ -22,6 +22,7 @@ gem 'active_model_serializers', '~> 0.10.0'
 gem 'acts_as_votable', '~> 0.11.1'
 gem 'carrierwave-aws'
 gem 'factory_bot_rails'
+gem 'graphql'
 gem 'has_secure_token'
 gem 'kaminari'
 gem 'rack-attack'
@@ -36,6 +37,7 @@ group :development, :test do
   gem 'dotenv-rails'
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
+  gem 'graphiql-rails'
 end
 
 group :development do
